@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Semester Results with Ranking</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            width: 60%;
+            margin: auto;
+            background: white;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+            margin-top: 30px;
+        }
+        input {
+            width: 80%;
+            padding: 10px;
+            margin: 5px 0;
+            font-size: 16px;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        button:hover {
+            background-color: #218838;
+        }
+        .result {
+            margin-top: 20px;
+            font-size: 18px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            border: 1px solid black;
+            padding: 10px;
+        }
+        th {
+            background-color: #28a745;
+            color: white;
+        }
+        .add-student {
+            margin-top: 30px;
+            padding: 20px;
+            border-top: 2px solid #ddd;
+        }
+        @media (max-width: 600px) {
+            .container {
+                width: 90%;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h2>Semester Results with Ranking</h2>
+
+        <!-- Add Student Section -->
+        <div class="add-student">
+            <h3>Add Student</h3>
+            <input type="text" id="studentName" placeholder="Enter Student Name">
+            <input type="number" id="subject1" placeholder="Marks for Subject 1 (0-100)">
+            <input type="number" id="subject2" placeholder="Marks for Subject 2 (0-100)">
+            <input type="number" id="subject3" placeholder="Marks for Subject 3 (0-100)">
+            <input type="number" id="subject4" placeholder="Marks for Subject 4 (0-100)">
+            <input type="number" id="subject5" placeholder="Marks for Subject 5 (0-100)">
+            <button onclick="addStudent()">Add Student</button>
+            <button onclick="calculateRankings()">Calculate Rankings</button>
+        </div>
+
+        <!-- Results Table -->
+        <div class="result">
+            <h3>Results</h3>
+            <table id="resultsTable">
+                <tr>
+                    <th>Rank</th>
+                    <th>Name</th>
+                    <th>Total Marks</th>
+                    <th>Percentage</th>
+                    <th>Grade</th>
+                </tr>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        let students = [];
+
+        function addStudent() {
+            let name = document.getElementById("studentName").value;
+            if (name.trim() === "") {
+                alert("Please enter the student's name.");
+                return;
+            }
+
+            let marks = [];
+            for (let i = 1; i <= 5; i++) {
+                let mark = document.getElementById(subject${i}).value;
+                if (mark === "") {
+                    alert("Please enter marks for all subjects.");
+                    return;
+                }
+                mark = parseFloat(mark);
+                if (mark < 0 || mark > 100) {
+                    alert("Marks should be between 0 and 100.");
+                    return;
+                }
+                marks.push(mark);
+            }
+
+            let total = marks.reduce((sum, mark) => sum + mark, 0);
+            let percentage = (total / 500) * 100;
+            let grade = getGrade(percentage);
+
+            students.push({ name, total, percentage, grade });
+
+            alert(${name}'s marks added successfully!);
+            clearInputs();
+        }
+
+        function calculateRankings() {
+            students.sort((a, b) => b.percentage - a.percentage); 
+
+            let table = document.getElementById("resultsTable");
+            table.innerHTML = `
+                <tr>
+                    <th>Rank</th>
+                    <th>Name</th>
+                    <th>Total Marks</th>
+                    <th>Percentage</th>
+                    <th>Grade</th>
+                </tr>
+            `;
+
+            students.forEach((student, index) => {
+                let row = table.insertRow();
+                row.innerHTML = `
+                    <td>${index + 1}</td>
+                    <td>${student.name}</td>
+                    <td>${student.total} / 500</td>
+                    <td>${student.percentage.toFixed(2)}%</td>
+                    <td>${student.grade}</td>
+                `;
+            });
+        }
+
+        function getGrade(percentage) {
+            if (percentage >= 90) return "A+";
+            else if (percentage >= 80) return "A";
+            else if (percentage >= 70) return "B";
+            else if (percentage >= 60) return "C";
+            else return "Fail";
+        }
+
+        function clearInputs() {
+            document.getElementById("studentName").value = "";
+            for (let i = 1; i <= 5; i++) {
+                document.getElementById(subject${i}).value = "";
+            }
+        }
+    </script>
+
+</body>
+</html>
